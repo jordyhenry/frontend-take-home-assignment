@@ -1,21 +1,13 @@
 import * as React from 'react'
-import CurrencyInput from 'react-currency-input'
 
 import styled from 'styled-components'
 import { device } from '../../GlobalStyle'
 
 type CustomCurrencyInputProps = {
   className?: string,
-  children?: string,
   onChangeEvent?: CallableFunction,
-  value?: string
+  value: number
 }
-
-const CustomCurrencyInput = (props: CustomCurrencyInputProps) => (
-  <CurrencyInput className={props.className} onChangeEvent={props.onChangeEvent} value={props.value}>
-    {props.children}
-  </CurrencyInput>
-);
 
 export const MoneyInputContainer = styled.div`
   margin-top: 8px;
@@ -51,7 +43,7 @@ export const MoneyInputIcon = styled.span`
   }
 `
 
-export const MoneyInputElement = styled(CustomCurrencyInput)`
+export const MoneyInputElement = styled.input`
   padding : 24px;
   width: 100%;
 

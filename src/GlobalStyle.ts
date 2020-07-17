@@ -1,7 +1,7 @@
 import { createGlobalStyle } from 'styled-components'
 
 const breakpoints = {
-  desktop: '1360px',
+  desktop: '1370px',
 }
 
 export const device = {

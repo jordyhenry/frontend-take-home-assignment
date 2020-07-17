@@ -13,16 +13,20 @@ import OriginHeader from '../../components/OriginHeader'
 import MoneyInput from '../../components/MoneyInput'
 import MonthlyDateInput from '../../components/MonthlyDateInput'
 
+import MonthlyDateInputContainer from '../../components/MonthlyDateInputContainer'
+
+import { toCurrency, toNumber } from '../../utils/currencyMask'
+
 type MonthChangeData = {
-  elapsedMonths : string,
+  elapsedMonths : number,
   currentDate : string
 }
 
 const PlaningSavingGoal = () => {
-  const [currentAmount, setCurrentAmount] = React.useState('0,00')
-  const [monthlyAmount, setMonthlyAmount] = React.useState('0,00')
+  const [currentAmount, setCurrentAmount] = React.useState(0.00)
+  const [monthlyAmount, setMonthlyAmount] = React.useState(0.00)
   const [currentDate, setCurrentDate] = React.useState('')
-  const [elapsedMonths, setElapsedMonths] = React.useState('')
+  const [elapsedMonths, setElapsedMonths] = React.useState(1)
   
   const handleMonthChange = (data: MonthChangeData) => 
   {
@@ -30,18 +34,26 @@ const PlaningSavingGoal = () => {
     setCurrentDate(data.currentDate)
   }
 
+  const handleCurrencyChange = (event : React.ChangeEvent<HTMLInputElement>) => {
+    let value = toNumber(event.target.value)
+    setCurrentAmount(value)
+  }
+
+  const handleCurrencyKeyUp = (event : React.KeyboardEvent<HTMLInputElement>) => {
+    let formattedValue = event.currentTarget.value
+    formattedValue = toCurrency(formattedValue)
+    event.currentTarget.value = formattedValue
+  }
+
   React.useEffect(() => 
   {
-    const amountToNumber = Number(currentAmount.replace(/[^0-9\.]+/g,""));
-    const elapsedMonthsToNumber = Number(elapsedMonths)
-
-    if(amountToNumber <= 0 || elapsedMonthsToNumber <= 0){
-      setMonthlyAmount('0,00')
+    if(currentAmount <= 0 || elapsedMonths <= 0){
+      setMonthlyAmount(0)
       return
     }
 
-    const _monthlyAmount = amountToNumber / elapsedMonthsToNumber
-    setMonthlyAmount(_monthlyAmount.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}))
+    const _monthlyAmount = currentAmount / elapsedMonths
+    setMonthlyAmount(_monthlyAmount)
   },[currentAmount, currentDate])
 
 
@@ -63,19 +75,19 @@ const PlaningSavingGoal = () => {
         <InputsContainer>
           <InputGroup>
             <InputLabel>Total amount</InputLabel>
-            <MoneyInput onChange={setCurrentAmount} />
+            <MoneyInput onChange={handleCurrencyChange} onKeyUp={handleCurrencyKeyUp}/>
           </InputGroup>
 
           <InputGroup>
             <InputLabel>Reach goal by</InputLabel>
-            <MonthlyDateInput onChangeMonth={handleMonthChange} />
+            <MonthlyDateInputContainer onChangeMonth={handleMonthChange} />
           </InputGroup>
         </InputsContainer>
 
         <SavingCard>
           <CardHeaderContainer>
             <CardHeaderLabel>Monthly</CardHeaderLabel>
-            <CardHeaderText>${monthlyAmount}</CardHeaderText>
+            <CardHeaderText>${ toCurrency(monthlyAmount.toFixed(2)) }</CardHeaderText>
           </CardHeaderContainer>
 
           <CardFooter>

@@ -1,11 +1,37 @@
 import * as React from 'react'
 import { MonthDateInputContainer, MonthDateInputIcon, MonthDateInputElement} from './style'
 
-type MonthlyDateInputProps = {
+interface MonthlyDateInputContainerProps {
   onChangeMonth? : CallableFunction
 }
 
-const MonthlyDateInput = (props: MonthlyDateInputProps) => {
+interface MonthlyDateInputProps {
+
+  handlers : {
+    handleNextMonth: (event: React.MouseEvent) => void,
+    handlePreviousMonth : (event: React.MouseEvent) => void,
+    handleKeyDown: (event: React.KeyboardEvent) => void,
+  }
+  currentMonth: string,
+  currentYear: string
+}
+
+const MonthlyDateInput = ({handlers, currentMonth, currentYear} : MonthlyDateInputProps) => {
+  return (
+    <MonthDateInputContainer>
+      <MonthDateInputIcon onClick={handlers.handlePreviousMonth} > {"<"} </MonthDateInputIcon>
+      
+      <MonthDateInputElement tabIndex={0} onKeyDown={handlers.handleKeyDown}>
+        <p> {currentMonth} </p>
+        {currentYear}
+      </MonthDateInputElement>
+
+      <MonthDateInputIcon onClick={handlers.handleNextMonth} > {">"} </MonthDateInputIcon>
+    </MonthDateInputContainer>
+  )
+}
+
+const MonthlyDateInputContainer = (props: MonthlyDateInputContainerProps) => {
   const [currentDate, setCurrentDate] = React.useState<Date>(new Date())
   const [currentMonth, setCurrentMonth] = React.useState('')
   const [currentYear, setCurrentYear] = React.useState('')
@@ -80,17 +106,12 @@ const MonthlyDateInput = (props: MonthlyDateInputProps) => {
   }, [currentMonth, currentYear])
 
   return (
-    <MonthDateInputContainer>
-      <MonthDateInputIcon onClick={handlePreviousMonth} > {"<"} </MonthDateInputIcon>
-      
-      <MonthDateInputElement tabIndex={0} onKeyDown={handleKeyDown}>
-        <p> {currentMonth} </p>
-        {currentYear}
-      </MonthDateInputElement>
-
-      <MonthDateInputIcon onClick={handleNextMonth} > {">"} </MonthDateInputIcon>
-    </MonthDateInputContainer>
+    <MonthlyDateInput 
+      currentMonth={currentMonth} 
+      currentYear={currentYear}
+      handlers={{handleNextMonth, handlePreviousMonth, handleKeyDown}} 
+    />
   )
 }
 
-export default MonthlyDateInput
+export default MonthlyDateInputContainer

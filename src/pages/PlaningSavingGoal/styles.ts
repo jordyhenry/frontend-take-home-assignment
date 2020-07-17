@@ -35,6 +35,7 @@ export const Container = styled.div`
   @media ${device.desktop} {
     width: 38.88%;
     height: 68.18%;
+    max-height: 630px;
 
     overflow: hidden;
     
